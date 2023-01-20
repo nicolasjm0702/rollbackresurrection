@@ -1,0 +1,13 @@
+name: Rollbackresurrection
+version: '${project.version}'
+main: smtm.rollbackresurrection.Rollbackresurrection
+commands:
+  backup:
+    permission: smtm.rollbackresurrection.backup
+    description: Backup world
+    usage: /backup
+
+  rollback:
+    permission: smtm.rollbackresurrection.rollback
+    description: Rollback to last backup
+    usage: /rollback
