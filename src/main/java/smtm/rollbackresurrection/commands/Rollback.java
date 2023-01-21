@@ -4,14 +4,14 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import smtm.rollbackresurrection.Rollbackresurrection;
-import smtm.rollbackresurrection.handlers.BackupHandler;
+import smtm.rollbackresurrection.controllers.RollbackController;
 
 public class Rollback implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (sender.hasPermission("rollbackresurrection.rollback")) {
             try {
-                BackupHandler.rollback(Rollbackresurrection.getPlugin(Rollbackresurrection.class));
+                RollbackController.rollback(Rollbackresurrection.getPlugin(Rollbackresurrection.class));
             } catch (Exception e) {
                 sender.sendMessage(e.getMessage());
             }

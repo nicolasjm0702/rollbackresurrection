@@ -4,8 +4,14 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import smtm.rollbackresurrection.Rollbackresurrection;
+import smtm.rollbackresurrection.controllers.FileController;
+import smtm.rollbackresurrection.controllers.RollbackController;
+
+import java.util.HashMap;
 
 public class DeathHandler implements Listener {
+    public static HashMap<String, Integer> mortes = new HashMap<>();
+    public static String ultimaMorte = null;
     private final Rollbackresurrection plugin;
     public DeathHandler(Rollbackresurrection plugin) {
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
@@ -13,34 +19,21 @@ public class DeathHandler implements Listener {
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
+    @SuppressWarnings("BusyWait")
     public void onDeath(org.bukkit.event.entity.PlayerDeathEvent evt) {
-        try {
-            java.io.File file = new java.io.File(plugin.getDataFolder(), "lastdeath.tmp");
-            if (!file.exists())
-                file.createNewFile();
-
-            java.io.FileWriter fw = new java.io.FileWriter(file, false);
-            fw.write(evt.getDeathMessage());
-            fw.close();
-        } catch (java.io.IOException e) {
-            e.printStackTrace();
+        FileController.adicionarMorte(evt, plugin);
+        if (RollbackController.isBackupRunning) {
+            evt.getEntity().setHealth(20.0);
+            plugin.getServer().setWhitelist(true);
         }
 
-        new Thread(() -> {
-            try {
-                for (org.bukkit.entity.Player player : evt.getEntity().getWorld().getPlayers()) {
-                    player.kickPlayer(evt.getDeathMessage());
-                }
-                if (BackupHandler.isBackupRunning) {
-                    plugin.getServer().setWhitelist(true);
-                    while (BackupHandler.isBackupRunning)
-                        Thread.sleep(1000);
-                    plugin.getServer().setWhitelist(false);
-                }
-                BackupHandler.rollback(plugin);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }).start();
+        for (org.bukkit.entity.Player player : evt.getEntity().getWorld().getPlayers())
+            player.kickPlayer(evt.getDeathMessage());
+
+        try {
+            RollbackController.rollback(plugin);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -12,6 +12,8 @@ public class RestartHandler implements Listener {
 
     @EventHandler(priority = org.bukkit.event.EventPriority.NORMAL)
     public void onRestart(org.bukkit.event.player.PlayerCommandPreprocessEvent evt) {
+        if (!evt.getPlayer().isOp())
+            return;
         if (evt.getMessage().equalsIgnoreCase("/restart")) {
             evt.setCancelled(true);
             Bukkit.getServer().shutdown();
