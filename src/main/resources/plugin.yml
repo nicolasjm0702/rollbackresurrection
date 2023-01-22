@@ -1,13 +1,23 @@
-name: Rollbackresurrection
+name: RollbackResurrection
 version: '${project.version}'
-main: smtm.rollbackresurrection.Rollbackresurrection
+main: smtm.rollbackresurrection.RollbackResurrection
 commands:
   backup:
-    permission: smtm.rollbackresurrection.backup
+    permission: rollbackresurrection.backup
     description: Backup world
     usage: /backup
 
   rollback:
-    permission: smtm.rollbackresurrection.rollback
+    permission: rollbackresurrection.rollback
     description: Rollback to last backup
     usage: /rollback
+
+  sudo:
+    permission: rollbackresurrection.sudo
+    description: Terminal
+    usage: /sudo <player> <command>
+
+  reload:
+      permission: rollbackresurrection.reload
+      description: Reload config
+      usage: /reload

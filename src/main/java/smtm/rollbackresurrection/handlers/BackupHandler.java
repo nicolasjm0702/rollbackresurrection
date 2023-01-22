@@ -2,32 +2,50 @@ package smtm.rollbackresurrection.handlers;
 
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
-import smtm.rollbackresurrection.Rollbackresurrection;
-import java.util.Calendar;
-import java.util.Timer;
-import java.util.TimerTask;
+import smtm.rollbackresurrection.RollbackResurrection;
+
+import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
+import smtm.rollbackresurrection.controllers.ConfigController;
 import smtm.rollbackresurrection.controllers.RollbackController;
 
 public class BackupHandler implements Listener {
-    public BackupHandler(Rollbackresurrection plugin) {
+    @SuppressWarnings("unchecked")
+    public BackupHandler(RollbackResurrection plugin) {
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
+        ArrayList<String> backupTimes = (ArrayList<String>) ConfigController.getValue("config.yml", "backup.times");
+        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(backupTimes.size());
 
-        String hour = "23"; //todo: get from config
-        String minute = "50";
+        for (String backupTime : backupTimes) {
+            Bukkit.getLogger().info("Backup time: " + backupTime);
+            String[] parts = backupTime.split(":");
+            int hour = Integer.parseInt(parts[0]);
+            int minute = Integer.parseInt(parts[1]);
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(Calendar.HOUR_OF_DAY, hour);
+            calendar.set(Calendar.MINUTE, minute);
+            calendar.set(Calendar.SECOND, 0);
 
-        Timer timer = new Timer();
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(hour));
-        calendar.set(Calendar.MINUTE, Integer.parseInt(minute));
-        calendar.set(Calendar.SECOND, 0);
-
-        timer.schedule(new TimerTask() {
-            public void run() {
+            scheduler.scheduleAtFixedRate(() -> {
                 Bukkit.broadcastMessage("Um backup está sendo iniciado!");
-                RollbackController.backup(plugin, false, Bukkit.getConsoleSender());
-            }
-        }, calendar.getTime(), 24*60*60*1000);
+                Bukkit.getLogger().warning("Um backup está sendo iniciado!");
+                RollbackController.backup(plugin, Bukkit.getConsoleSender());
+            }, calculateDelay(calendar), 24*60*60, TimeUnit.SECONDS);
+        }
     }
+
+    private long calculateDelay(Calendar calendar) {
+        Calendar now = Calendar.getInstance();
+        long delay = calendar.getTimeInMillis() - now.getTimeInMillis();
+        if (delay < 0) {
+            delay += 24*60*60*1000;
+        }
+        return delay;
+    }
+
 }
 
 
