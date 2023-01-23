@@ -65,10 +65,9 @@
     <dependencies>
         <dependency>
             <groupId>org.bukkit</groupId>
-            <artifactId>craftbukkit</artifactId>
-            <version>1.7.10-R0.1-20140808.005431-8</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/src/main/resources/craftbukkit-1.7.10-R0.1-20140808.005431-8.jar</systemPath>
+            <artifactId>bukkit</artifactId>
+            <version>1.12.2-R0.1-SNAPSHOT</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>

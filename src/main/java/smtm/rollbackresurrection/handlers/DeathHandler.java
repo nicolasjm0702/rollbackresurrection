@@ -1,5 +1,6 @@
 package smtm.rollbackresurrection.handlers;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -20,8 +21,9 @@ public class DeathHandler implements Listener {
         this.plugin = plugin;
     }
 
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onDeath(PlayerDeathEvent evt) {
+        Bukkit.getLogger().warning("Player " + evt.getEntity().getName() + " died");
         MortesController.adicionarMorte(evt);
         if (RollbackController.isBackupRunning)
             evt.getEntity().setHealth(20.0);

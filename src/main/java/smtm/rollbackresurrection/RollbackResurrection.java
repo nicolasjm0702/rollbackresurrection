@@ -10,7 +10,7 @@ import smtm.rollbackresurrection.controllers.MortesController;
 import smtm.rollbackresurrection.handlers.*;
 
 public final class RollbackResurrection extends JavaPlugin {
-    private static final String version = "6";
+    private static final String version = "1.12.2_v1";
 
     @Override
     public void onEnable() {
